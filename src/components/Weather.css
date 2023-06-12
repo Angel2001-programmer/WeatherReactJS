@@ -1,0 +1,35 @@
+.weatherContainer{
+    background-color: rgba(0, 0, 0, 0.474);
+    min-width: 400px;
+    border-radius: 25px;
+    box-shadow: 5px 5px 5px 2px rgba(0, 0, 0, 0.526);
+    padding: 20px;
+}
+
+.weatherRow{
+    display: flex;
+    justify-content: space-evenly;
+}
+
+input{
+    width: 80%;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.weeklycontainer{
+    display: flex;
+    place-items: center;
+    justify-content: center;
+    padding: 10px;
+    height: 320px;
+    width: 2.1em;
+    background-color: rgba(1, 1, 52, 0.724);
+    box-shadow: 5px 5px 5px 2px rgba(0, 0, 0, 0.526);
+    border-radius: 8px;
+}
+
+h1, h3{
+    margin: 5px 0 5px 0;
+    padding: 0;
+}
