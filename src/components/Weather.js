@@ -1,5 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import "./Weather.css";
+import Axios from "axios";
+import WeatherColumn from "./WeatherColumn";
+
 const Weather = () => {
   const [location, setLocation] = useState("");
   const [weather, setWeather] = useState("");
@@ -7,38 +10,62 @@ const Weather = () => {
   const [weatherIcon, setWeatherIcon] = useState("");
   const [temperature, setTemperature] = useState("");
   const [temperatureF, setTemperatureF] = useState("");
-
-  const [data, setdata] = useState(null);
-  const API_KEY = "6bc0cc514753cf1e36f040a0a5cf858b";
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [api, setAPI] = useState(null);
+  const [errMSG, seterrMSG] = useState("");
+  const API_KEY = "7daf7fee8bd01cd592c6d91140650f0c";
 
   const inputHandler = (e) => setLocation(e.target.value);
+  const clickHandler = () => {
+    getWeather();
+  };
 
-  const getData = async () => {
-    if (location != "") {
-      const response = await fetch(
+  const getWeather = () => {
+    if (location !== "") {
+      Axios.get(
         "https://api.openweathermap.org/data/2.5/weather?q=" +
           location +
           "&appid=" +
           API_KEY +
           "&units=metric"
-      );
-
-      setdata(await response.json());
-
-      if (data != []) {
-        setTemperature(data["main"]["temp"] + "C");
-        setTemperatureF((data["main"]["temp"] * (9 / 5) + 32).toFixed(2) + "F");
-
-        for (let i of data["weather"]) {
-          setWeatherIcon(
-            "http://openweathermap.org/img/w/" + i["icon"] + ".png"
+      )
+        .then((response) => {
+          setAPI(response.data);
+          for (let i of response.data.weather) {
+            setWeather(i.main);
+            setWeatherDescription(i.description);
+            setWeatherIcon(
+              "http://openweathermap.org/img/w/" + i.icon + ".png"
+            );
+          }
+          setTemperature(response.data.main.temp + "C");
+          setTemperatureF(
+            (response.data.main.temp * (9 / 5) + 32).toFixed(2) + "F"
           );
-          setWeather(i["main"]);
-          setWeatherDescription(i["description"]);
-        }
-      } else {
-        return;
-      }
+          seterrMSG(null);
+          setIsLoaded(true);
+        })
+        .catch((error) => {
+          console.log(error);
+          seterrMSG(
+            "Something went wrong, please retype city in search field."
+          );
+          setLocation("");
+          setWeather(null);
+          setWeatherDescription(null);
+          setWeatherIcon(null);
+          setTemperature(null);
+          setTemperatureF(null);
+          setIsLoaded(false);
+        });
+    } else {
+      seterrMSG("Search field cannot be empty.");
+      setLocation("");
+      setWeather(null);
+      setWeatherDescription(null);
+      setWeatherIcon(null);
+      setTemperature(null);
+      setTemperatureF(null);
     }
   };
 
@@ -50,17 +77,23 @@ const Weather = () => {
         onChange={inputHandler}
         placeholder='Type your location here'
       />
-      <button onClick={getData}>→</button>
+      <button onClick={clickHandler}>→</button>
       <div className='weatherCol'>
         <h1>{location}</h1>
-        <img src={weatherIcon}></img>
-        <div className='weatherCol'>
-          <h3>{weather}</h3>
-          <h3>{weatherDescription}</h3>
-          <h3>{temperature}</h3>
-          <h3>{temperatureF}</h3>
-        </div>
       </div>
+      {
+        isLoaded?<img src={weatherIcon}></img>:null
+
+      }
+      <WeatherColumn
+        props={
+          { weather: weather,
+            weatherDescription: weatherDescription,
+            temperature: temperature,
+            temperatureF: temperatureF,
+            errMSG: errMSG }
+        }
+      />
     </div>
   );
 };
