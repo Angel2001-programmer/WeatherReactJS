@@ -66,6 +66,7 @@ const Weather = () => {
       setWeatherIcon(null);
       setTemperature(null);
       setTemperatureF(null);
+      setIsLoaded(false);
     }
   };
 
@@ -81,18 +82,15 @@ const Weather = () => {
       <div className='weatherCol'>
         <h1>{location}</h1>
       </div>
-      {
-        isLoaded?<img src={weatherIcon}></img>:null
-
-      }
+      {isLoaded ? <img src={weatherIcon}></img> : null}
       <WeatherColumn
-        props={
-          { weather: weather,
-            weatherDescription: weatherDescription,
-            temperature: temperature,
-            temperatureF: temperatureF,
-            errMSG: errMSG }
-        }
+        props={{
+          weather: weather,
+          weatherDescription: weatherDescription,
+          temperature: temperature,
+          temperatureF: temperatureF,
+          errMSG: errMSG,
+        }}
       />
     </div>
   );
